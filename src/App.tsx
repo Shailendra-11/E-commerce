@@ -1,11 +1,14 @@
-import { Button } from "./components/ui/button"
+
+import Banner from "./components/Banner"
+import Header from "./components/Header"
+
 
 const App = () => {
   return (
-    <div className="to-red-500">App
-    
-      <Button>hii</Button>
-    </div>
+    <>
+     <Header/>
+     <Banner/>
+    </>
   )
 }
 
