@@ -29,7 +29,7 @@ const Banner = () => {
   }
 
   return (
-    <div className="bg-[#002147] min-h-screen p-1">
+    <div className="bg-[#002147] h-[550px] p-1">
       <div className="relative overflow-hidden rounded-md">
 
         {/* Image */}
