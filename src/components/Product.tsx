@@ -7,22 +7,30 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 
 
 const Product = () => {
-     const [limit , setLimit] = useState(0)
-     const [skip , setSkip] = useState(0)
-     const [total , setTotal] = useState(0)
+     const [skip, setSkip] = useState(0)
+     const [limit, setLimit] = useState(12)
+     const [total, setTotal] = useState(0)
      const dispatch = useDispatch<AppDispatch>()
 
      // const {product, loading , error} = useSelector((state :RootState )=> state.product)
 
-     const {product, loading, error } = useSelector((state: RootState) => state.product);
+     const { product, loading, error } = useSelector((state: RootState) => state.product);
 
      useEffect(() => {
-          dispatch(fetchProducts())
-          setTotal(product?.total)
-          setSkip(product?.skip)
-     }, [])
+          dispatch(fetchProducts({ limit, skip }));
+     }, [skip, limit]);
 
-     const totals : number =  Math.round(total/12);
+     useEffect(() => {
+          if (product?.total) {
+               setTotal(product.total);
+          }
+     }, [product]);
+
+
+     const totals: number = Math.ceil(total / limit);
+     const currentPage:number = Math.floor(skip / limit) + 1;
+
+     console.log(currentPage)
      return (
           <>
                <div className="bg-[#002147] py-14 px-6">
@@ -94,23 +102,102 @@ const Product = () => {
                     </div>
 
                     <div className="mt-8">
-                         <Pagination>
-                              {total}
-                              <PaginationContent>
-                                   <PaginationItem>
-                                        <PaginationPrevious className="text-white" href="#" />
-                                   </PaginationItem>
-                                   <PaginationItem>
-                                        <PaginationLink href="#" className="text-white">1</PaginationLink>
-                                   </PaginationItem>
-                                   <PaginationItem>
-                                        <PaginationEllipsis />
-                                   </PaginationItem>
-                                   <PaginationItem>
-                                        <PaginationNext className="text-white" href="#" />
-                                   </PaginationItem>
-                              </PaginationContent>
-                         </Pagination>
+                         {total > 0 && (
+                              <Pagination>
+                                   <PaginationContent>
+
+                                        {/* Previous Button */}
+                                        {skip > 0 && (
+                                             <PaginationItem>
+                                                  <PaginationPrevious
+                                                       className="text-white"
+                                                       href="#"
+                                                       onClick={() => setSkip(skip - limit)}
+                                                  />
+                                             </PaginationItem>
+                                        )}
+
+                                        {/* ---------- FIRST PAGE ---------- */}
+                                        <PaginationItem>
+                                             <PaginationLink
+                                                  href="#"
+                                                  className={`text-white ${currentPage === 1 ? "bg-blue-600" : ""}`}
+                                                  onClick={() => setSkip(0)}
+                                             >
+                                                  1
+                                             </PaginationLink>
+                                        </PaginationItem>
+
+                                        {/* ---------- LEADING ELLIPSIS ---------- */}
+                                        {currentPage > 4 && (
+                                             <PaginationItem>
+                                                  <PaginationEllipsis className="text-white" />
+                                             </PaginationItem>
+                                        )}
+
+                                        {/* ---------- CENTER 3 PAGES ---------- */}
+                                        {[...Array(totals)].map((_, i) => {
+                                             const page = i + 1;
+                                             const pageSkip = i * limit;
+
+                                             if (
+                                                  page >= currentPage - 1 &&
+                                                  page <= currentPage + 1 &&
+                                                  page !== 1 &&
+                                                  page !== totals
+                                             ) {
+                                                  return (
+                                                       <PaginationItem key={i}>
+                                                            <PaginationLink
+                                                                 href="#"
+                                                                 className={`text-white ${currentPage === page ? "bg-blue-600" : ""
+                                                                      }`}
+                                                                 onClick={() => setSkip(pageSkip)}
+                                                            >
+                                                                 {page}
+                                                            </PaginationLink>
+                                                       </PaginationItem>
+                                                  );
+                                             }
+                                             return null;
+                                        })}
+
+                                        {/* ---------- TRAILING ELLIPSIS ---------- */}
+                                        {currentPage < totals - 3 && (
+                                             <PaginationItem>
+                                                  <PaginationEllipsis className="text-white" />
+                                             </PaginationItem>
+                                        )}
+
+                                        {/* ---------- LAST PAGE ---------- */}
+                                        {totals > 1 && (
+                                             <PaginationItem>
+                                                  <PaginationLink
+                                                       href="#"
+                                                       className={`text-white ${currentPage === totals ? "bg-blue-600" : ""
+                                                            }`}
+                                                       onClick={() => setSkip((totals - 1) * limit)}
+                                                  >
+                                                       {totals}
+                                                  </PaginationLink>
+                                             </PaginationItem>
+                                        )}
+
+
+                                        {/* Next Button */}
+                                        {skip + limit < total && (
+                                             <PaginationItem>
+                                                  <PaginationNext
+                                                       className="text-white"
+                                                       href="#"
+                                                       onClick={() => setSkip(skip + limit)}
+                                                  />
+                                             </PaginationItem>
+                                        )}
+
+                                   </PaginationContent>
+                              </Pagination>
+                         )}
                     </div>
                </div>
           </>

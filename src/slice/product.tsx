@@ -5,19 +5,19 @@ import type { ProductState } from "../interface/interface";
 
 
 const initialState: ProductState = {
-     product :[],
+     product: [],
      loading: false,
      error: null,
 
-};
-
+}
 
 
 export const fetchProducts = createAsyncThunk(
      "products/fetchProducts",
-     async (_, { rejectWithValue }) => {
+     async (params: { limit: number, skip: number }, { rejectWithValue }) => {
           try {
-               const response = await axios.get("https://dummyjson.com/products");
+               const { limit, skip } = params;
+               const response = await axios.get(`https://dummyjson.com/products?limit=${limit}&skip=${skip}`);
                return response.data; // 👈 important
           } catch (error: any) {
                return rejectWithValue(error.message);

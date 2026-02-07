@@ -1,17 +1,26 @@
-
-import Banner from "./components/Banner"
-import Header from "./components/Header"
-import Product from "./components/Product"
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./page/Home";
+import About from "./page/About";
+import Contact from "./page/Contact";
+import Product from "./page/Product";
+import ProductDetails from "./page/ProductDetails";
 
 const App = () => {
   return (
-    <>
-     <Header/>
-     <Banner/>
-     <Product/>
-    </>
-  )
-}
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+        </Route>
 
-export default App
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
