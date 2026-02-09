@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchProducts } from "../slice/product";
 import type { AppDispatch, RootState } from "../store";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "./ui/pagination";
+import { addToCart } from "../slice/cart";
 
 
 const Product = () => {
@@ -25,6 +26,10 @@ const Product = () => {
                setTotal(product.total);
           }
      }, [product]);
+
+     const cart = useSelector((state: RootState) => state.cart);
+
+     console.log(cart ,"cart")
 
 
      const totals: number = Math.ceil(total / limit);
@@ -68,7 +73,7 @@ const Product = () => {
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition">
                                              <button
                                                   className="px-4 py-2 bg-[#002147] text-white rounded-lg text-sm hover:bg-blue-700"
-                                                  onClick={() => console.log("Add to cart", item)}
+                                                  onClick={() => dispatch(addToCart(item))}
                                              >
                                                   🛒 Add to Cart
                                              </button>
