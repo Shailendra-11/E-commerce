@@ -6,10 +6,14 @@ import type { ProductState } from "../interface/interface";
 
 const initialState: ProductState = {
      product: [],
+     category: [],
      loading: false,
      error: null,
 
 }
+
+
+
 
 
 export const fetchProducts = createAsyncThunk(
@@ -18,12 +22,27 @@ export const fetchProducts = createAsyncThunk(
           try {
                const { limit, skip } = params;
                const response = await axios.get(`https://dummyjson.com/products?limit=${limit}&skip=${skip}`);
-               return response.data; // 👈 important
+               return response.data;
           } catch (error: any) {
                return rejectWithValue(error.message);
           }
      }
 );
+
+
+export const fetchCategory = createAsyncThunk(
+     "category/fetchCategory",
+     async (_, { rejectWithValue }) => {
+          try {
+               const response = await axios.get("https://dummyjson.com/products/categories")
+               return response.data;
+
+          } catch (error: any) {
+               return rejectWithValue(error.message);
+
+          }
+     }
+)
 
 
 export const productSlice = createSlice({
@@ -42,6 +61,20 @@ export const productSlice = createSlice({
                     state.product = action.payload;
                })
                .addCase(fetchProducts.rejected, (state, action) => {
+                    state.loading = false;
+                    state.error = action.payload as string;
+               })
+
+               //  category
+               .addCase(fetchCategory.pending, (state) => {
+                    state.loading = true;
+                    state.error = null;
+               })
+               .addCase(fetchCategory.fulfilled, (state, action) => {
+                    state.loading = false;
+                    state.category = action.payload;
+               })
+               .addCase(fetchCategory.rejected, (state, action) => {
                     state.loading = false;
                     state.error = action.payload as string;
                });
