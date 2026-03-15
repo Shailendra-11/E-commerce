@@ -16,9 +16,13 @@ export interface Category {
      name: String,
      url: String
 }
+
+
+
 export interface ProductState {
      product: products[];
      category: Category[];
+     details : products | null
      loading: boolean;
      error: string | null;
      // replace `any` with a proper Product type later

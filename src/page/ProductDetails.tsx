@@ -1,6 +1,28 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { fetchProductDetails } from "../slice/product";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from "../store";
 
 const ProductDetails = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const Id: Number = Number(id);
+
+  const { details, loading, error } = useSelector((state: RootState) => state.product);
+
+
+  useEffect(() => {
+    dispatch(fetchProductDetails({ Id }));
+  }, [Id]);
+
+
+  console.log("det", details)
+
+
+
+
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
 
@@ -9,8 +31,8 @@ const ProductDetails = () => {
         {/* Image */}
         <div>
           <img
-            src="https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp"
-            alt="title"
+            src={details?.thumbnail}
+            alt={details?.title}
             className="w-full rounded-lg"
           />
         </div>
@@ -18,20 +40,24 @@ const ProductDetails = () => {
         {/* Info */}
         <div className="space-y-4">
 
-          <h1 className="text-3xl font-bold">"product.title"</h1>
+          <h1 className="text-3xl font-bold">{details?.title}</h1>
 
-          <p className="text-gray-600">"product.description"</p>
+          <p className="text-gray-600">{details?.description}</p>
+
+          <p className="text-gray-600">
+           <span className="font-bold">Brand :</span> {details?.brand || "Unknown"}
+          </p>
 
           <p className="text-yellow-500">
-            ⭐4
+            ⭐{details?.rating}
           </p>
 
           <p className="text-2xl font-semibold text-green-600">
-            $5
+            ${details?.price}
           </p>
 
           <p className="text-sm text-gray-500">
-            Stock: 4
+            Stock: {details?.stock}
           </p>
 
           {/* Quantity */}

@@ -2,11 +2,22 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { ProductState } from "../interface/interface";
 
-
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  thumbnail: string;
+  images: string[];
+}
 
 const initialState: ProductState = {
      product: [],
      category: [],
+     details : null,
      loading: false,
      error: null,
 }
@@ -27,6 +38,20 @@ export const fetchProducts = createAsyncThunk(
           }
      }
 );
+
+
+export const fetchProductDetails = createAsyncThunk(
+     "productDetails/fetchProductDetails",
+     async (params: { Id: number }, { rejectWithValue }) => {
+          const { Id } = params;
+          try {
+               const response = await axios.get(`https://dummyjson.com/products/${Id}`);
+               return response.data
+          } catch (error: any) {
+               return rejectWithValue(error.message);
+          }
+     }
+)
 
 
 export const fetchCategory = createAsyncThunk(
@@ -74,6 +99,21 @@ export const productSlice = createSlice({
                     state.category = action.payload;
                })
                .addCase(fetchCategory.rejected, (state, action) => {
+                    state.loading = false;
+                    state.error = action.payload as string;
+               })
+
+               // details
+
+               .addCase(fetchProductDetails.pending, (state) => {
+                    state.loading = true;
+                    state.error = null;
+                })
+               .addCase(fetchProductDetails.fulfilled, (state, action) => {
+                    state.loading = false;
+                    state.details = action.payload;
+               })
+               .addCase(fetchProductDetails.rejected, (state, action) => {
                     state.loading = false;
                     state.error = action.payload as string;
                });
