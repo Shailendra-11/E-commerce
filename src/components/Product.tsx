@@ -5,6 +5,7 @@ import { fetchProducts } from "../slice/product";
 import type { AppDispatch, RootState } from "../store";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "./ui/pagination";
 import { addToCart } from "../slice/cart";
+import { useNavigate } from "react-router";
 
 
 const Product = () => {
@@ -12,6 +13,7 @@ const Product = () => {
      const [limit, setLimit] = useState(12)
      const [total, setTotal] = useState(0)
      const dispatch = useDispatch<AppDispatch>()
+     const navigate = useNavigate();
 
      // const {product, loading , error} = useSelector((state :RootState )=> state.product)
 
@@ -29,13 +31,16 @@ const Product = () => {
 
      const cart = useSelector((state: RootState) => state.cart);
 
-     console.log(cart ,"cart")
+     // console.log(cart ,"cart")
 
 
      const totals: number = Math.ceil(total / limit);
-     const currentPage:number = Math.floor(skip / limit) + 1;
+     const currentPage: number = Math.floor(skip / limit) + 1;
 
-     console.log(currentPage)
+     // console.log(currentPage)
+     const PageRouter = (id :number) => {
+          navigate(`/product/${id}`)
+     }
      return (
           <>
                <div className="bg-[#002147] py-14 px-6">
@@ -80,7 +85,7 @@ const Product = () => {
 
                                              <button
                                                   className="px-4 py-2 bg-white text-[#002147] rounded-lg text-sm font-semibold hover:bg-gray-200"
-                                                  onClick={() => console.log("View details", item.id)}
+                                                  onClick={()=> PageRouter(item?.id)}
                                              >
                                                   👁 View
                                              </button>

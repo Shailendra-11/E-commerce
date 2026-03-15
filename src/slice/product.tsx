@@ -9,7 +9,6 @@ const initialState: ProductState = {
      category: [],
      loading: false,
      error: null,
-
 }
 
 
