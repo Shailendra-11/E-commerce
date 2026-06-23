@@ -73,6 +73,8 @@ export const productSlice = createSlice({
      name: "product",
      initialState,
      reducers: {
+
+          
      },
      extraReducers: (builder) => {
           builder

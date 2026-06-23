@@ -83,7 +83,7 @@ const Product = () => {
       focus:ring-2 focus:ring-blue-500
     "
             >
-              <SelectValue  placeholder="Selected Category" />
+              <SelectValue placeholder="Selected Category" />
             </SelectTrigger>
 
             <SelectContent className="bg-[#2a6bab] border border-white/20">

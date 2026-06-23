@@ -13,7 +13,8 @@ const ProductDetails = () => {
 
 
   useEffect(() => {
-    dispatch(fetchProductDetails({ Id }));
+    return dispatch(fetchProductDetails({ Id }));
+    
   }, [Id]);
 
 

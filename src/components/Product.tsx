@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Card } from "./ui/card";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { MouseEvent } from "react";
 import { fetchProducts } from "../slice/product";
 import type { AppDispatch, RootState } from "../store";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "./ui/pagination";
@@ -14,6 +15,7 @@ const Product = () => {
      const [total, setTotal] = useState(0)
      const dispatch = useDispatch<AppDispatch>()
      const navigate = useNavigate();
+     const productGridRef = useRef<HTMLDivElement>(null);
 
      // const {product, loading , error} = useSelector((state :RootState )=> state.product)
 
@@ -41,6 +43,19 @@ const Product = () => {
      const PageRouter = (id :number) => {
           navigate(`/product/${id}`)
      }
+
+     const handlePageChange = (
+          event: MouseEvent<HTMLAnchorElement>,
+          nextSkip: number
+     ) => {
+          event.preventDefault();
+          setSkip(nextSkip);
+          productGridRef.current?.scrollIntoView({
+               behavior: "smooth",
+               block: "start",
+          });
+     };
+
      return (
           <>
                <div className="bg-[#002147] py-14 px-6">
@@ -55,7 +70,11 @@ const Product = () => {
                     </div>
 
                     {/* Products Section */}
-                    <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+                    <div
+                         id="products"
+                         ref={productGridRef}
+                         className="mt-10 scroll-mt-28 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 justify-items-center"
+                    >
                          {product?.products?.map((item) => (
                               <div
                                    key={item.id}
@@ -121,8 +140,10 @@ const Product = () => {
                                              <PaginationItem>
                                                   <PaginationPrevious
                                                        className="text-white"
-                                                       href="#"
-                                                       onClick={() => setSkip(skip - limit)}
+                                                       href="#products"
+                                                       onClick={(event) =>
+                                                            handlePageChange(event, Math.max(skip - limit, 0))
+                                                       }
                                                   />
                                              </PaginationItem>
                                         )}
@@ -130,9 +151,9 @@ const Product = () => {
                                         {/* ---------- FIRST PAGE ---------- */}
                                         <PaginationItem>
                                              <PaginationLink
-                                                  href="#"
+                                                  href="#products"
                                                   className={`text-white ${currentPage === 1 ? "bg-blue-600" : ""}`}
-                                                  onClick={() => setSkip(0)}
+                                                  onClick={(event) => handlePageChange(event, 0)}
                                              >
                                                   1
                                              </PaginationLink>
@@ -159,10 +180,10 @@ const Product = () => {
                                                   return (
                                                        <PaginationItem key={i}>
                                                             <PaginationLink
-                                                                 href="#"
+                                                                 href="#products"
                                                                  className={`text-white ${currentPage === page ? "bg-blue-600" : ""
                                                                       }`}
-                                                                 onClick={() => setSkip(pageSkip)}
+                                                                 onClick={(event) => handlePageChange(event, pageSkip)}
                                                             >
                                                                  {page}
                                                             </PaginationLink>
@@ -183,10 +204,12 @@ const Product = () => {
                                         {totals > 1 && (
                                              <PaginationItem>
                                                   <PaginationLink
-                                                       href="#"
+                                                       href="#products"
                                                        className={`text-white ${currentPage === totals ? "bg-blue-600" : ""
                                                             }`}
-                                                       onClick={() => setSkip((totals - 1) * limit)}
+                                                       onClick={(event) =>
+                                                            handlePageChange(event, (totals - 1) * limit)
+                                                       }
                                                   >
                                                        {totals}
                                                   </PaginationLink>
@@ -199,8 +222,10 @@ const Product = () => {
                                              <PaginationItem>
                                                   <PaginationNext
                                                        className="text-white"
-                                                       href="#"
-                                                       onClick={() => setSkip(skip + limit)}
+                                                       href="#products"
+                                                       onClick={(event) =>
+                                                            handlePageChange(event, Math.min(skip + limit, (totals - 1) * limit))
+                                                       }
                                                   />
                                              </PaginationItem>
                                         )}
